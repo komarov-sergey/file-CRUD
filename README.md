@@ -31,3 +31,10 @@
     - /logout [GET] - выйти из системы;
 - После выхода необходимо получить новый токен;
 - Старый должен перестать работать;
+
+-----
+db:
+https://hevodata.com/learn/docker-mysql/
+docker run -p 13306:3306 --name mysql-docker-local -eMYSQL_ROOT_PASSWORD=Password -d mysql:latest
+connect from host to image
+mysql --host=127.0.0.1 --port=13306 -u root -p

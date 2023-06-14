@@ -1,5 +1,6 @@
 import express from 'express'
 import 'reflect-metadata'
+import {createDatabase} from 'typeorm-extension'
 
 import {AppDataSource} from './data-source'
 import router from './routes'
@@ -14,6 +15,7 @@ AppDataSource.initialize()
       .use(express.urlencoded({extended: true}))
       .use(router)
       .listen(port)
+    createDatabase({ifNotExist: true})
     console.log(`Server started on port ${port}`)
   })
   .catch((error) => console.log(error))

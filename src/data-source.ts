@@ -7,7 +7,7 @@ export const AppDataSource = new DataSource({
   port: 13306,
   username: 'root',
   password: 'Password',
-  database: 'mysql',
+  database: 'files',
   synchronize: true,
   logging: false,
   entities: [__dirname + '/../**/*.entity.{js,ts}'],

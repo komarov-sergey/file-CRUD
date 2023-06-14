@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import {Router} from 'express'
 import {FileController, FileRepository} from './file.repository'
-import {reverse} from 'node:dns'
+import path from 'node:path'
 
 export default Router()
   .post('/upload', async (req, res) => {
@@ -32,7 +32,23 @@ export default Router()
 
     res.json({message: resultOrError})
   })
+  .delete('/delete/:id', async (req, res) => {
+    const {
+      params: {id},
+    } = req
 
+    try {
+      let fileFormDB = await FileRepository.findOneBy({id: Number(id)})
+
+      console.log(`${process.cwd()}/${fileFormDB.path}`)
+
+      fs.unlinkSync(`${process.cwd()}/${fileFormDB.path}`)
+
+      res.json({messsage: 'File was deleted.'})
+    } catch (e) {
+      res.json({messsage: "Can't delete file."})
+    }
+  })
   .post('/download/:id', async (req, res) => {
     try {
       const {

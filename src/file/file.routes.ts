@@ -39,14 +39,54 @@ export default Router()
 
     try {
       let fileFormDB = await FileRepository.findOneBy({id: Number(id)})
-
-      console.log(`${process.cwd()}/${fileFormDB.path}`)
-
       fs.unlinkSync(`${process.cwd()}/${fileFormDB.path}`)
 
       res.json({messsage: 'File was deleted.'})
     } catch (e) {
       res.json({messsage: "Can't delete file."})
+    }
+  })
+  .put('/update/:id', async (req, res) => {
+    const {
+      params: {id},
+    } = req
+
+    try {
+      let fileFormDB = await FileRepository.findOneBy({id: Number(id)})
+      console.log({fileFormDB})
+      //@ts-ignore
+      const fileData = req.files
+
+      const updateFileData = {
+        name: fileData[0].originalname,
+        extension: fileData[0].originalname
+          .split('.')
+          .reverse()
+          .slice(0, -1)
+          .join('.'),
+        mimetype: fileData[0].mimetype,
+        size: fileData[0].size,
+        path: fileData[0].path,
+      }
+
+      await FileRepository.update({id: Number(id)}, updateFileData)
+
+      res.json({messsage: 'File was updated.'})
+    } catch (e) {
+      res.json({messsage: "Can't update file."})
+    }
+  })
+  .get('/:id', async (req, res) => {
+    try {
+      const {
+        params: {id},
+      } = req
+
+      let fileFromDB = await FileRepository.findOneBy({id: Number(id)})
+
+      res.json({message: fileFromDB})
+    } catch (e) {
+      res.json({messsage: "Can't get file."})
     }
   })
   .post('/download/:id', async (req, res) => {

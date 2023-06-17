@@ -9,11 +9,13 @@
 истечению, с помощью refresh токена;
 - Реализовать на основе фреймворка express js;
 - API:
-    - /signin [POST] - запрос bearer токена по id и паролю;
-    - /signin/new_token [POST] - обновление bearer токена по refresh токену
     - /signup [POST] - регистрация нового пользователя;
     - Поля id и password, id это номер телефона или email;
     - При удачной регистрации вернуть пару bearer токен и refresh токен;
+
+    - /signin [POST] - запрос bearer токена по id и паролю;
+    
+    - /signin/new_token [POST] - обновление bearer токена по refresh токену
         - /info [GET] - возвращает id пользователя;
         - /logout [GET] - выйти из системы;
     - После выхода необходимо получить новый токен;

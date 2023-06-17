@@ -2,12 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  VersionColumn,
 } from 'typeorm'
 
 @Entity()
-export class File {
+export class User {
   @PrimaryGeneratedColumn()
   id: number
 
@@ -18,17 +20,16 @@ export class File {
   updateddAt: string
 
   @Column()
-  name: string
+  email: string
 
   @Column()
-  extension: string
+  phone: string
+
+  @Column({
+    length: 1500,
+  })
+  password: string
 
   @Column()
-  mimetype: string
-
-  @Column()
-  size: string
-
-  @Column()
-  path: string
+  refreshToken: string
 }

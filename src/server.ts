@@ -1,6 +1,7 @@
 import express from 'express'
 import 'reflect-metadata'
 import {createDatabase} from 'typeorm-extension'
+import 'dotenv/config'
 
 import {AppDataSource} from './data-source'
 import router from './routes'

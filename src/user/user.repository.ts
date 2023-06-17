@@ -62,6 +62,15 @@ export class UserController {
     }
   }
 
+  public static async updateToken() {
+    try {
+      return Promise.resolve(this.generateJWT())
+    } catch (e) {
+      console.log(e)
+      return Promise.reject(`Can't update token.`)
+    }
+  }
+
   private static async hashPassword(password) {
     return crypto
       .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')

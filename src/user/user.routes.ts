@@ -20,3 +20,8 @@ export default Router()
 
     res.json({messsage: userOrError})
   })
+  .post('/signin/new_token', async (req, res) => {
+    const tokenOrError = await UserController.updateToken()
+
+    res.json({messsage: tokenOrError})
+  })

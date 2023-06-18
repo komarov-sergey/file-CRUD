@@ -19,16 +19,16 @@ export class UserController {
             email: id,
             password: await this.hashPassword(password),
             phone: '',
-            refreshToken: this.generateJWT(),
           }
         : {
             phone: id,
             password: await this.hashPassword(password),
             email: '',
-            refreshToken: this.generateJWT(),
           }
 
       const newUser = await UserRepository.save(newUserTemplate)
+      newUser.refreshToken = this.generateJWT('refresh', newUser.id)
+      await UserRepository.save(newUser)
 
       return Promise.resolve(newUser)
     } catch (e) {
@@ -49,22 +49,26 @@ export class UserController {
         return Promise.reject('No user found.')
       }
 
-      console.log({user})
-
       if (!this.isValidPassword(user.password, password)) {
         return Promise.reject('Id or passord is invalid.')
       }
 
-      return Promise.resolve(this.generateJWT('sign'))
+      return Promise.resolve(this.generateJWT('sign', user.id))
     } catch (e) {
       console.log(e)
       return Promise.reject(e)
     }
   }
 
-  public static async updateToken() {
+  public static async updateToken(token) {
     try {
-      return Promise.resolve(this.generateJWT())
+      jwt.verify(token, process.env.SECRET)
+
+      const user = await UserRepository.findOneBy({refreshToken: token})
+
+      if (!user) Promise.reject('User not found.')
+
+      return Promise.resolve(this.generateJWT('sign', user.id))
     } catch (e) {
       console.log(e)
       return Promise.reject(`Can't update token.`)
@@ -77,7 +81,7 @@ export class UserController {
       .toString('hex')
   }
 
-  private static generateJWT(type = 'sign') {
+  private static generateJWT(type = 'sign', id) {
     const today = new Date()
     const exp = new Date(today)
 
@@ -88,8 +92,9 @@ export class UserController {
     return jwt.sign(
       {
         exp: exp.getTime() / 1000,
+        id,
       },
-      'secret'
+      process.env.SECRET
     )
   }
 

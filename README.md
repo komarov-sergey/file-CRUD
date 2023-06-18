@@ -1,41 +1,5 @@
-Техническое задание | ERP.AERO | Node.js dev
-
-Задача:
-Сделать сервис с REST API.
-- Авторизация по bearer токену (/info, /latency, /logout, /file(все роуты) );
-- Настроить CORS для доступа с любого домена;
-- DB – Mysql;
-- Токен создавать при каждой авторизации, действителен 10 минут. Продлевать по
-истечению, с помощью refresh токена;
-- Реализовать на основе фреймворка express js;
-- API:
-    - /signup [POST] - регистрация нового пользователя;
-    - Поля id и password, id это номер телефона или email;
-    - При удачной регистрации вернуть пару bearer токен и refresh токен;
-    - /signin [POST] - запрос bearer токена по id и паролю;
-
-    - /signin/new_token [POST] - обновление bearer токена по refresh токену
-        - /info [GET] - возвращает id пользователя;
-        - /logout [GET] - выйти из системы;
-    - После выхода необходимо получить новый токен;
-    - Старый должен перестать работать;
-
-    - /file/upload [POST] - добавление нового файла в систему и запись
-    параметров файла в базу: название, расширение, MIME type, размер, дата
-    загрузки;
-    - /file/download/:id [GET] - скачивание конкретного файла;
-    - /file/list [GET] выводит список файлов и их параметров из базы с
-    использованием пагинации с размером страницы, указанного в
-    передаваемом параметре list_size, по умолчанию 10 записей на страницу, если параметр пустой. Номер страницы указан в параметре page, по умолчанию 1, если не задан;
-    - /file/delete/:id [DELETE] - удаляет документ из базы и локального
-    хранилища;
-    - /file/:id [GET] - вывод информации о выбранном файле;
-    - /file/update/:id [PUT] - обновление текущего документа на новый в базе и локальном хранилище;
-
-
------
-db:
-https://hevodata.com/learn/docker-mysql/
-docker run -p 13306:3306 --name mysql-docker-local -eMYSQL_ROOT_PASSWORD=Password -d mysql:latest
-connect from host to image
-mysql --host=127.0.0.1 --port=13306 -u root -p
+## For run BE locally
+- run mysql
+- rename ```.env-example``` to ```.env``` and fill all variables
+- in cmd run: ```npm i```
+- in cmd run: ```npm run dev```

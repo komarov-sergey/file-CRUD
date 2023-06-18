@@ -19,10 +19,10 @@ export class User {
   @UpdateDateColumn()
   updateddAt: string
 
-  @Column()
+  @Column({unique: true})
   email: string
 
-  @Column()
+  @Column({unique: true})
   phone: string
 
   @Column({
@@ -30,6 +30,8 @@ export class User {
   })
   password: string
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   refreshToken: string
 }

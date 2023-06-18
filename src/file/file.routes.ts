@@ -2,9 +2,10 @@ import fs from 'node:fs'
 import {Router} from 'express'
 import {FileController, FileRepository} from './file.repository'
 import path from 'node:path'
+import auth from '../middleware/auth'
 
 export default Router()
-  .post('/upload', async (req, res) => {
+  .post('/upload', auth, async (req, res) => {
     //@ts-ignore
     const fileData = req.files
 
@@ -22,7 +23,7 @@ export default Router()
 
     res.json({message: resultOrError})
   })
-  .get('/list', async (req, res) => {
+  .get('/list', auth, async (req, res) => {
     const {list_size, page} = req.query
 
     const resultOrError = await FileRepository.findAndCount({
@@ -32,7 +33,7 @@ export default Router()
 
     res.json({message: resultOrError})
   })
-  .delete('/delete/:id', async (req, res) => {
+  .delete('/delete/:id', auth, async (req, res) => {
     const {
       params: {id},
     } = req
@@ -46,7 +47,7 @@ export default Router()
       res.json({messsage: "Can't delete file."})
     }
   })
-  .put('/update/:id', async (req, res) => {
+  .put('/update/:id', auth, async (req, res) => {
     const {
       params: {id},
     } = req
@@ -76,7 +77,7 @@ export default Router()
       res.json({messsage: "Can't update file."})
     }
   })
-  .get('/:id', async (req, res) => {
+  .get('/:id', auth, async (req, res) => {
     try {
       const {
         params: {id},
@@ -89,7 +90,7 @@ export default Router()
       res.json({messsage: "Can't get file."})
     }
   })
-  .post('/download/:id', async (req, res) => {
+  .post('/download/:id', auth, async (req, res) => {
     try {
       const {
         params: {id},

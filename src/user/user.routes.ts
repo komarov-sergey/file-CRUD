@@ -1,5 +1,7 @@
 import {Router} from 'express'
-import {UserController} from './user.repository'
+import {UserController, UserRepository} from './user.repository'
+import {handleResponsePromise} from '../helpers'
+import jwt from 'jsonwebtoken'
 
 export default Router()
   .post('/signup', async (req, res) => {
@@ -7,21 +9,58 @@ export default Router()
       body: {id, password},
     } = req
 
-    const newUserOrError = await UserController.signupUser(id, password)
-
-    res.json({messsage: newUserOrError})
+    await handleResponsePromise(UserController.signupUser(id, password), res)
   })
   .post('/signin', async (req, res) => {
     const {
       body: {id, password},
     } = req
 
-    const userOrError = await UserController.signinUser(id, password)
-
-    res.json({messsage: userOrError})
+    await handleResponsePromise(UserController.signinUser(id, password), res)
   })
   .post('/signin/new_token', async (req, res) => {
-    const tokenOrError = await UserController.updateToken()
+    const {
+      body: {token},
+    } = req
+    await handleResponsePromise(UserController.updateToken(token), res)
+  })
+  .get('/info', (req, res) => {
+    try {
+      const {
+        body: {token},
+      } = req
 
-    res.json({messsage: tokenOrError})
+      const decodedToken = jwt.verify(token, process.env.SECRET)
+
+      console.log({decodedToken})
+
+      res.json({id: 'test_id'})
+    } catch (e) {
+      console.log(e)
+      res.json({message: `Can't get user id`})
+    }
+  })
+  .get('/logout', async (req, res) => {
+    const {
+      body: {id},
+    } = req
+
+    try {
+      let user = await UserRepository.findOneBy({id})
+
+      if (!user) {
+        return Promise.reject('User not found')
+      }
+
+      user.refreshToken = null
+
+      await UserRepository.save({
+        ...user,
+      })
+
+      res.json({message: `User logut`})
+    } catch (e) {
+      console.log(e)
+      res.json({message: `User logut`})
+    }
   })

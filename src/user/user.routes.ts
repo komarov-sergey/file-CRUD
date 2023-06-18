@@ -30,9 +30,7 @@ export default Router()
         body: {token},
       } = req
 
-      const decodedToken = jwt.verify(token, process.env.SECRET)
-
-      console.log({decodedToken})
+      jwt.verify(token, process.env.SECRET)
 
       res.json({id: 'test_id'})
     } catch (e) {

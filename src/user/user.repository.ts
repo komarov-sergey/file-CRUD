@@ -99,7 +99,6 @@ export class UserController {
   }
 
   private static isValidPassword(hashPassword, password) {
-    console.log(this.salt)
     const hash = crypto
       .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
       .toString('hex')

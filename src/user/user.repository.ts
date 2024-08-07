@@ -39,25 +39,44 @@ export class UserService {
           return Promise.reject('Invalid credentials.')
         }
 
+        user.refreshToken = this.generateJWT('refresh', user.id)
+        await UserRepository.save(user)
+
+        return Promise.resolve({token: user.refreshToken})
+      },
+      (e) => Promise.reject(e)
+    )()
+  }
+
+  public static async updateToken({token}) {
+    return R.tryCatch(
+      async () => {
+        jwt.verify(token, process.env.SECRET)
+        const user = await UserRepository.findOneBy({refreshToken: token})
+        if (!user) return Promise.reject('User not found.')
+
         return Promise.resolve({token: this.generateJWT('sign', user.id)})
       },
       (e) => Promise.reject(e)
     )()
   }
 
-  public static async updateToken(token) {
-    try {
-      jwt.verify(token, process.env.SECRET)
+  public static async loguoutUser({id}) {
+    return R.tryCatch(
+      async () => {
+        let user = await UserRepository.findOneBy({id})
 
-      const user = await UserRepository.findOneBy({refreshToken: token})
+        if (!user) {
+          return Promise.reject('User not found')
+        }
 
-      if (!user) Promise.reject('User not found.')
+        user.refreshToken = null
+        await UserRepository.save(user)
 
-      return Promise.resolve(this.generateJWT('sign', user.id))
-    } catch (e) {
-      console.log(e)
-      return Promise.reject(`Can't update token.`)
-    }
+        return Promise.resolve('User was succesfull logout.')
+      },
+      (e) => Promise.reject(e)
+    )()
   }
 
   private static async hashPassword(password) {

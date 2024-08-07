@@ -1,11 +1,13 @@
 export class AuthError extends Error {
   public code
   public status
+  public description
 
   constructor(data) {
-    super(data.description)
-    this.code = data.code || 'UNAUTHORIZED_ERROR'
+    super(data)
+    this.code = 'UNAUTHORIZED_ERROR'
     this.status = 401
+    this.description = data
   }
 }
 export class UnexpectedError extends Error {

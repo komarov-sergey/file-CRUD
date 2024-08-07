@@ -7,7 +7,7 @@ import {User} from './user.entity'
 
 export const UserRepository = AppDataSource.getRepository(User)
 
-export class UserController {
+export class UserService {
   private static salt = process.env.SALT
   public constructor() {}
 
@@ -26,27 +26,23 @@ export class UserController {
     )()
   }
 
-  public static async signinUser(id, password) {
-    try {
-      const isEmail = id.includes('a')
+  public static async loginUser({email, phone, password}) {
+    return R.tryCatch(
+      async () => {
+        const user = await UserRepository.findOneBy(email ? {email} : {phone})
 
-      const user = isEmail
-        ? await UserRepository.findOneBy({email: id})
-        : await UserRepository.findOneBy({phone: id})
+        if (!user) {
+          return Promise.reject('User not found.')
+        }
 
-      if (!user) {
-        return Promise.reject('No user found.')
-      }
+        if (!this.isValidPassword(user.password, password)) {
+          return Promise.reject('Invalid credentials.')
+        }
 
-      if (!this.isValidPassword(user.password, password)) {
-        return Promise.reject('Id or passord is invalid.')
-      }
-
-      return Promise.resolve(this.generateJWT('sign', user.id))
-    } catch (e) {
-      console.log(e)
-      return Promise.reject(e)
-    }
+        return Promise.resolve({token: this.generateJWT('sign', user.id)})
+      },
+      (e) => Promise.reject(e)
+    )()
   }
 
   public static async updateToken(token) {

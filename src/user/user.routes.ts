@@ -2,30 +2,25 @@ import {Router} from 'express'
 import jwt from 'jsonwebtoken'
 import R from 'ramda'
 
-import {UserController, UserRepository} from './user.repository'
+import {UserService, UserRepository} from './user.repository'
 import {handleResponsePromise} from '../helpers'
 
 export default Router()
   .post('/signup', async ({body}, res) =>
-    UserController.signupUser(body)
+    UserService.signupUser(body)
       .then((data) => res.json(data))
-      .catch((e) => {
-        res.status(422).json({errors: {body: [e.toString()]}})
-      })
+      .catch((e) => res.status(422).json({errors: {body: [e.toString()]}}))
   )
-
-  .post('/signin', async (req, res) => {
-    const {
-      body: {id, password},
-    } = req
-
-    await handleResponsePromise(UserController.signinUser(id, password), res)
+  .post('/signin', async ({body}, res) => {
+    UserService.loginUser(body)
+      .then((data) => res.json(data))
+      .catch((e) => res.status(422).json({errors: {body: [e.toString()]}}))
   })
   .post('/signin/new_token', async (req, res) => {
     const {
       body: {token},
     } = req
-    await handleResponsePromise(UserController.updateToken(token), res)
+    await handleResponsePromise(UserService.updateToken(token), res)
   })
   .get('/info', (req, res) => {
     try {

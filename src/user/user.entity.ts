@@ -2,10 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VersionColumn,
 } from 'typeorm'
 
 @Entity()

@@ -1,16 +1,19 @@
 import {Router} from 'express'
+import jwt from 'jsonwebtoken'
+import R from 'ramda'
+
 import {UserController, UserRepository} from './user.repository'
 import {handleResponsePromise} from '../helpers'
-import jwt from 'jsonwebtoken'
 
 export default Router()
-  .post('/signup', async (req, res) => {
-    const {
-      body: {id, password},
-    } = req
+  .post('/signup', async ({body}, res) =>
+    UserController.signupUser(body)
+      .then((data) => res.json(data))
+      .catch((e) => {
+        res.status(422).json({errors: {body: [e.toString()]}})
+      })
+  )
 
-    await handleResponsePromise(UserController.signupUser(id, password), res)
-  })
   .post('/signin', async (req, res) => {
     const {
       body: {id, password},

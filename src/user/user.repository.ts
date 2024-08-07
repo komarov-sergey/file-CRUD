@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import jwt from 'jsonwebtoken'
+import R from 'ramda'
 
 import {AppDataSource} from '../data-source'
 import {User} from './user.entity'
@@ -7,34 +8,22 @@ import {User} from './user.entity'
 export const UserRepository = AppDataSource.getRepository(User)
 
 export class UserController {
-  public static salt = process.env.SALT
+  private static salt = process.env.SALT
   public constructor() {}
 
-  public static async signupUser(id, password) {
-    try {
-      const isEmail = id.includes('a')
-
-      const newUserTemplate = isEmail
-        ? {
-            email: id,
-            password: await this.hashPassword(password),
-            phone: '',
-          }
-        : {
-            phone: id,
-            password: await this.hashPassword(password),
-            email: '',
-          }
-
-      const newUser = await UserRepository.save(newUserTemplate)
-      newUser.refreshToken = this.generateJWT('refresh', newUser.id)
-      await UserRepository.save(newUser)
-
-      return Promise.resolve(newUser)
-    } catch (e) {
-      console.log(e)
-      return Promise.reject(e)
-    }
+  public static async signupUser({email, phone, password}) {
+    return R.tryCatch(
+      async () => {
+        let newUser = await UserRepository.save({
+          email,
+          phone,
+          password: await this.hashPassword(password),
+        })
+        newUser.refreshToken = this.generateJWT('refresh', newUser.id)
+        return UserRepository.save(newUser)
+      },
+      (e) => Promise.reject(e)
+    )()
   }
 
   public static async signinUser(id, password) {

@@ -39,40 +39,28 @@ export default Router()
       .then(data => res.json(data))
       .catch(e => res.status(422).json({ errors: { body: [e.toString()] } }))
   )
-  .get('/:id', auth, async (req, res) => {
+  .get('/:id', auth, async ({ params: { id } }, res) =>
+    FileRepository.findOneBy({ id: Number(id) })
+      .then(data => res.json(data))
+      .catch(e => res.status(422).json({ errors: { body: [e.toString()] } }))
+  )
+  .post('/download/:id', auth, async ({ params: { id } }, res) => {
     try {
-      const {
-        params: { id },
-      } = req
-
-      let fileFromDB = await FileRepository.findOneBy({ id: Number(id) })
-
-      res.json({ message: fileFromDB })
-    } catch (e) {
-      res.json({ messsage: "Can't get file." })
-    }
-  })
-  .post('/download/:id', auth, async (req, res) => {
-    try {
-      const {
-        params: { id },
-      } = req
-
       let fileFormDB = await FileRepository.findOneBy({ id: Number(id) })
 
       if (!fileFormDB) {
-        return Promise.reject('File not found.')
+        return res.json({ messsage: 'File not found.' })
       }
 
-      const path = `uploads/${fileFormDB.path}`
+      const path = `${fileFormDB.path}`
       const file = fs.createReadStream(path)
       const filename = new Date().toISOString()
       res.setHeader(
         'Content-Disposition',
         'attachment: filename="' + filename + '"'
       )
-      file.pipe(res)
+      return file.pipe(res)
     } catch (e) {
-      res.json({ messsage: "Can't read file" })
+      return res.json({ messsage: "Can't read file" })
     }
   })

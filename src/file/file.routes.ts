@@ -34,20 +34,11 @@ export default Router()
       .then(data => res.json(data))
       .catch(e => res.status(422).json({ errors: { body: [e.toString()] } }))
   )
-  .delete('/delete/:id', auth, async (req, res) => {
-    const {
-      params: { id },
-    } = req
-
-    try {
-      let fileFormDB = await FileRepository.findOneBy({ id: Number(id) })
-      fs.unlinkSync(`${process.cwd()}/${fileFormDB.path}`)
-
-      res.json({ messsage: 'File was deleted.' })
-    } catch (e) {
-      res.json({ messsage: "Can't delete file." })
-    }
-  })
+  .delete('/delete/:id', auth, async ({ params: { id } }, res) =>
+    FileService.deleteFile(id)
+      .then(data => res.json(data))
+      .catch(e => res.status(422).json({ errors: { body: [e.toString()] } }))
+  )
   .put('/update/:id', auth, async (req, res) => {
     const {
       params: { id },

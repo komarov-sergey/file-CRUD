@@ -26,16 +26,14 @@ export default Router()
       .then(data => res.json(data))
       .catch(e => res.status(422).json({ errors: { body: [e.toString()] } }))
   })
-  .get('/list', auth, async (req, res) => {
-    const { list_size, page } = req.query
-
-    const resultOrError = await FileRepository.findAndCount({
+  .get('/list', auth, async ({ query: { page, list_size } }, res) =>
+    FileRepository.findAndCount({
       skip: Number(page),
       take: Number(list_size),
     })
-
-    res.json({ message: resultOrError })
-  })
+      .then(data => res.json(data))
+      .catch(e => res.status(422).json({ errors: { body: [e.toString()] } }))
+  )
   .delete('/delete/:id', auth, async (req, res) => {
     const {
       params: { id },

@@ -2,9 +2,9 @@ import 'reflect-metadata'
 import {DataSource} from 'typeorm'
 
 export const AppDataSource = new DataSource({
-  type: 'mysql',
+  type: 'postgres',
   host: process.env.HOST,
-  port: Number(process.env.PORT),
+  port: Number(process.env.DB_PORT),
   username: process.env.USERNAME,
   password: process.env.PASSWORD,
   database: process.env.DB,

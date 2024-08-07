@@ -1,12 +1,10 @@
 import express from 'express'
 import 'reflect-metadata'
-import {createDatabase} from 'typeorm-extension'
 import 'dotenv/config'
 
 import {AppDataSource} from './data-source'
 import router from './routes'
 
-const port = 5000
 const app = express()
 
 AppDataSource.initialize()
@@ -15,8 +13,7 @@ AppDataSource.initialize()
       .use(express.json())
       .use(express.urlencoded({extended: true}))
       .use(router)
-      .listen(port)
-    createDatabase({ifNotExist: true})
-    console.log(`Server started on port ${port}`)
+      .listen(process.env.HOST_PORT)
+    console.log(`Server started on port ${process.env.HOST_PORT}`)
   })
   .catch((error) => console.log(error))

@@ -1,16 +1,14 @@
-import {AppDataSource} from '../data-source'
-import {File} from './file.entity'
+import { AppDataSource } from '../data-source'
+import { File } from './file.entity'
+import R from 'ramda'
 
 export const FileRepository = AppDataSource.getRepository(File)
 
-export class FileController {
+export class FileService {
   public static async uploadFile(file) {
-    try {
-      const newFile = await FileRepository.save({...file})
-      return Promise.resolve(newFile)
-    } catch (e) {
-      console.log(e)
-      Promise.reject(e)
-    }
+    return R.tryCatch(
+      async () => Promise.resolve(await FileRepository.save({ ...file })),
+      e => Promise.reject(e)
+    )()
   }
 }

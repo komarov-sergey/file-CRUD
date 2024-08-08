@@ -2,8 +2,9 @@ import { Router } from 'express'
 import multer from 'multer'
 
 import errorHandler from './middleware/err'
-import fileRoutes from './file/file.routes'
-import userRoutes from './user/user.routes'
+import fileRoutes from './file/file.route'
+import userRoutes from './user/user.route'
+import reportRoutes from './report/report.route'
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -23,3 +24,4 @@ export default Router()
   })
   .use(['/file', '/files'], upload.array('file'), fileRoutes)
   .use('/', userRoutes)
+  .use('/', reportRoutes)

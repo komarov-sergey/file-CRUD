@@ -7,8 +7,6 @@ const XlsxPopulateAccess = XlsxDataFill.XlsxPopulateAccess
 
 export class ReportsService {
   public static async fillTemplate({ file_name, type }, body) {
-    console.log(file_name, type, body)
-
     const preparedData = this.prepareData(body)
     const workbook = await this.processData(
       preparedData,
@@ -16,14 +14,6 @@ export class ReportsService {
     )
 
     return await this.wrileToFile(workbook)
-
-    const file = fs.createReadStream('./uploads/ruamds1_out.xlsx')
-    const filename = new Date().toISOString()
-    res.setHeader(
-      'Content-Disposition',
-      'attachment: filename="' + filename + '"'
-    )
-    return file.pipe(res)
   }
 
   private static async processData(data, path) {
